@@ -1,0 +1,21 @@
+{
+  "cartId": 1,
+  "cartName": "Cart-1",
+  "productList": [
+    {
+      "productId": 1,
+      "productName": "Pr-1",
+      "productPrice": 5
+    },
+    {
+      "productId": 2,
+      "productName": "Pr-2",
+      "productPrice": 10
+    },
+    {
+      "productId": 4,
+      "productName": "Pr-4",
+      "productPrice": 100
+    }
+  ]
+}
