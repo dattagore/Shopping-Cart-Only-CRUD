@@ -1,32 +1,19 @@
-pipeline {
-    agent any
-
-    stages {
-        stage ('Compile Stage') {
-
-            steps {
-                withMaven(maven : 'maven363') {
-                    bat 'mvn clean compile'
-                }
-            }
-        }
-
-        stage ('Testing Stage') {
-
-            steps {
-                withMaven(maven : 'maven363') {
-                    bat 'mvn test'
-                }
-            }
-        }
-
-
-        stage ('Deployment Stage') {
-            steps {
-                withMaven(maven : 'maven363') {
-                    bat 'mvn deploy'
-                }
-            }
-        }
-    }
+node{
+   stage('SCM Checkout'){
+       git credentialsId: 'Git-cred', url: 'https://github.com/dattagore/Shopping-Cart-Only-CRUD', branch: 'main'
+   }
+   stage('Maven Package'){
+     def mvnHome = tool name: 'maven363', type: 'maven'
+     def mvnCMD = "${mvnHome}/bin/mvn"
+     bat "${mvnCMD} clean package"
+   }
+   stage('Build Docker Image'){
+     bat 'docker build -t dattatraygoredockerhub/shopping-cart:1.0.0 .'
+   }
+   stage('Push Docker Image to docker hub'){
+     withCredentials([string(credentialsId: 'docker-pwd', variable: 'dockerHubPwd')]) {
+        bat "docker login -u dattatraygoredockerhub -p ${dockerHubPwd}"
+     }
+     bat 'docker push dattatraygoredockerhub/shopping-cart:1.0.0'
+   }
 }
