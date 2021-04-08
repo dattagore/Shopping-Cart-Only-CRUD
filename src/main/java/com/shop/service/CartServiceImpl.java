@@ -1,6 +1,5 @@
 package com.shop.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,19 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shop.dao.CartRepository;
 import com.shop.model.Cart;
 import com.shop.model.Product;
-import com.shop.paymentservice.model.Payment;
-import com.shop.paymentservice.model.PaymentResponse;
 
 @Service
 @Transactional
@@ -122,33 +115,6 @@ public class CartServiceImpl implements CartService {
 		LOGGER.info("Method removeProductFromCart() completed");
 		return cart;
 
-	}
-
-	@Override
-	public PaymentResponse checkoutAndPay(Cart cart, Double total) throws Exception {
-		LOGGER.info("Method checkoutAndPay() started");
-		Payment paymentRequest = new Payment();
-		paymentRequest.setCartId(cart.getCartId());
-		paymentRequest.setAmount(total);
-		LOGGER.info("Calling Paymenbt service at " + new Date());
-		JsonNode response = restPost(paymentRequest, paymentServiceURL);
-		PaymentResponse paymentResponse = mapper.readValue(response.toString(), PaymentResponse.class);
-		LOGGER.info("Method checkoutAndPay() completed");
-		return paymentResponse;
-	}
-
-	private JsonNode restPost(Object request, String uri) throws Exception {
-		LOGGER.info("Method restPost() started");
-		HttpHeaders header = new HttpHeaders();
-		HttpEntity<Object> entity = new HttpEntity<>(request, header);
-		Object response = null;
-		try {
-			response = template.postForObject(uri, entity, JsonNode.class);
-		} catch (ResourceAccessException rae) {
-			throw new ResourceAccessException(paymentServiceUnavailableMsg);
-		}
-		LOGGER.info("Method restPost() completed");
-		return (JsonNode) response;
 	}
 
 }

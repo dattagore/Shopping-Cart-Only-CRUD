@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.shop.model.Cart;
-import com.shop.paymentservice.model.PaymentResponse;
 
 public interface CartService {
 	
@@ -22,6 +21,4 @@ public interface CartService {
 
 	public Cart removeProductFromCart(long cartIdInput, long productIdInput);
 
-	public PaymentResponse checkoutAndPay(Cart cart, Double total)
-			throws Exception;
 }
